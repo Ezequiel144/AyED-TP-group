@@ -65,3 +65,5 @@ El ingreso de datos finaliza como el equipo decida
   - La justificación de cualquier decisión tomada a la hora de resolver el problema.
 
 ## Fecha límite de entrega: 28 de julio
+- link de figma: 
+https://www.figma.com/board/9BImnWGTEmOq7Fi49unmZF/UTN-FRBA---ALGORITMOS-Y-ESTRUCTURA-DE-DATOS-TRABAJO-PR%C3%81CTICO-1-2024-%E2%80%93-K1201?node-id=0-1&t=xKTiOoxYdVIhAeha-1
