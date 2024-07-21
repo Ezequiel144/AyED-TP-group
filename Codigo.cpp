@@ -19,6 +19,10 @@ struct Venta
 unsigned cargandoDatos(Empresa[]);
 void mostrandoVector(Empresa[], const int);
 void escribiendoArchivoDeEmpresas(Empresa vect[], const int dim);
+unsigned extrayendoDatos(Empresa[]);
+void mostrandoVectorVentas(Venta[], const int);
+void candtidadDeVentasDia(Venta[], Empresa[], const int, int[]);
+void mostrandoTotalventas(Empresa[], int[], const int);
 
 int main()
 {
@@ -31,9 +35,70 @@ int main()
     /* Mostrando las empresas ya cargadas en el vector */
     mostrandoVector(vectEmpresas, dimRealVect);
     /* Escribe un archivo binario */
-    escribiendoArchivoDeEmpresas(vectEmpresas,dimRealVect);
-    
+    escribiendoArchivoDeEmpresas(vectEmpresas, dimRealVect);
+
+    /* leyendo archivo de las empresas */
+    Empresa vectDatosArch[dim /*-> 500*/];
+    unsigned dimVect = extrayendoDatos(vectDatosArch) - 1;
+    int vectTotal[dimVect] = {0};
+
+    /* Importe total por dia  */
+    Venta vectVentasEmpresas[dimVect * 3];
+    candtidadDeVentasDia(vectVentasEmpresas, vectDatosArch, dimVect, vectTotal);
+    cout << "-------------------------------------------------------" << endl;
+    mostrandoVectorVentas(vectVentasEmpresas, dimVect * 3);
+
+    /* mostrando el total de ventas de las empresas */
+    cout << "-------------------------------------------------------" << endl;
+    cout << "- Total de las empresas -" << endl;
+    mostrandoTotalventas(vectDatosArch,vectTotal,dimVect);
+
     return 0;
+}
+
+void mostrandoTotalventas(Empresa vect[], int vectTotal[], const int dim)
+{
+    for (unsigned i = 0; i < dim; i++)
+    {
+        cout << "Nombre de empresa -> " << vect[i].nombre << " | Importe total -> " << vectTotal[i] << endl;
+    }
+}
+
+void candtidadDeVentasDia(Venta vect[], Empresa vectTwo[], const int dim, int vectTotal[])
+{
+    unsigned j = 0;
+    unsigned contDia = 0;
+    /* Venta vectVentasEmpresas[dim * 3]; */
+
+    for (int i = 0; i < dim * 3; i++)
+    {
+        vect[i].codigo = vectTwo[j].codigo;
+        cout << "Nombre de empresa: " << vectTwo[j].nombre << endl;
+        vect[i].dia = contDia++;
+        cout << "Dia: " << contDia << endl;
+        cout << "Importe: ";
+        cin >> vect[i].importe;
+        vectTotal[j] += vect[i].importe;
+        if ((i + 1) % 3 == 0)
+        {
+            j++;
+            contDia = 0;
+        }
+    }
+}
+
+unsigned extrayendoDatos(Empresa vect[])
+{
+    FILE *lecturaArchBin = fopen("C:/Users/Ezequiel/Documents/UTN Buenos Aires/Algoy Estruc de datos 2024/TP/output/datos-de-empresas.dat", "rb");
+    int cont = 0;
+    /* Empresa vectDatosArch[500]; */
+    fseek(lecturaArchBin, 0, SEEK_SET);
+    while (!feof(lecturaArchBin))
+    {
+        fread(&vect[cont], sizeof(Empresa), 1, lecturaArchBin);
+        cont++;
+    }
+    return cont;
 }
 
 void escribiendoArchivoDeEmpresas(Empresa vect[], const int dim)
@@ -73,5 +138,14 @@ void mostrandoVector(Empresa vect[], const int dim)
     for (int i = 0; i < dim; i++)
     {
         cout << "Codigo de empresa -> " << vect[i].codigo << " | Nombre de empresa -> " << vect[i].nombre << endl;
+    }
+}
+
+void mostrandoVectorVentas(Venta vect[], const int dim)
+{
+    /* cout << "Cantidad de empresas cargadas: " << dim << endl; */
+    for (int i = 0; i < dim; i++)
+    {
+        cout << "Codigo de empresa -> " << vect[i].codigo << " | Dia -> " << vect[i].dia + 1 << " | Importe -> " << vect[i].importe << endl;
     }
 }
