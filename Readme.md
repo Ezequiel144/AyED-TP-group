@@ -46,7 +46,7 @@ El ingreso de datos finaliza como el equipo decida
 
 ## Condiciones de entregar TP:
 
-- Se debe entregar un .rar o un .zip que debe llevar el siguiente nombre: K1201-XXXX-TP1 Donde XXXX será el  nombre que los miembros del equipo le asignen al grupo.  
+- Se debe entregar un .rar o un .zip que debe llevar el siguiente nombre: K1201-XXXX-TP1 Donde XXXX será el nombre que los miembros del equipo le asignen al grupo.  
 
 - El archivo: K1201-XXXX-TP1 (.rar o .zip) corresponderá a una carpeta con los siguientes archivos, cuyos nombres deben tener el mismo nombre de la carpeta:  
   
