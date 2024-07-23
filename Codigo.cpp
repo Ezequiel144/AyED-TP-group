@@ -14,7 +14,7 @@ struct Venta
     unsigned dia;
     unsigned codigo;
     unsigned importe;
-    unsigned cantVentas; /* Rehacerlo y modificar*/
+    unsigned cantVentas;
 };
 /*
 struct VentasTotalEmpresa{
@@ -31,27 +31,29 @@ void escribiendoArchivoDeEmpresas(Empresa vect[], const int dim);
 unsigned extrayendoDatos(Empresa[]);
 void mostrandoVectorVentas(Venta[], const int);
 void candtidadDeVentasDia(Venta[], Empresa[], const int, int[], int[]);
-void mostrandoTotalventas(Empresa[], int[], const int,int[]);
+void mostrandoTotalventas(Empresa[], int[], const int, int[]);
+void menorImporteTotal(int [],const int,Empresa []);
 
 int main()
 {
     /*Definicion de variables*/
     const int dim = 500;
-    Empresa vectEmpresas[dim];
+    // Empresa vectEmpresas[dim];
     /*Ingreso de datos y estebleciendo la dimencion del vector*/
-    unsigned dimRealVect = cargandoDatos(vectEmpresas);
+    // unsigned dimRealVect = cargandoDatos(vectEmpresas);
     cout << "-------------------------------------------------------" << endl;
     /* Mostrando las empresas ya cargadas en el vector */
-    mostrandoVector(vectEmpresas, dimRealVect);
+    // mostrandoVector(vectEmpresas, dimRealVect);
     /* Escribe un archivo binario */
-    escribiendoArchivoDeEmpresas(vectEmpresas, dimRealVect);
+    // escribiendoArchivoDeEmpresas(vectEmpresas, dimRealVect);
 
+    /*punto 1) */
     /* leyendo archivo de las empresas */
     Empresa vectDatosArch[dim /*-> 500*/];
     unsigned dimVect = extrayendoDatos(vectDatosArch) - 1;
     int vectTotalImporte[dimVect] = {0};
     int vectTotalCantVentas[dimVect] = {0};
-
+    cout << "-------------------------------------------------------" << endl;
     /* Importe total por dia  */
     Venta vectVentasEmpresas[dimVect * 3];
     candtidadDeVentasDia(vectVentasEmpresas, vectDatosArch, dimVect, vectTotalImporte, vectTotalCantVentas);
@@ -62,7 +64,32 @@ int main()
     cout << "- Total de las empresas -" << endl;
     mostrandoTotalventas(vectDatosArch, vectTotalImporte, dimVect, vectTotalCantVentas);
 
+    /*Punto 3) */
+    /*Informar la o las empresas que recaudaron el menor importe total, informando también dicho importe*/
+    cout << "---------------------------------------------------------" << endl;
+    menorImporteTotal(vectTotalImporte,dimVect,vectDatosArch);
     return 0;
+}
+
+void menorImporteTotal(int vectImport[],const int dim,Empresa vectDato[])
+{
+    int menorImporte = vectImport[0];
+    for (int i = 0; i < dim; i++)
+    {
+        if (menorImporte > vectImport[i])
+        {
+            menorImporte = vectImport[i];
+        }
+    }
+
+    for (int j = 0; j < dim; j++)
+    {
+        if(vectImport[j] == menorImporte){
+             cout << "La empresa que tubo el menor importe total es -> " << vectDato[j].nombre << ",con el importe de -> " << menorImporte << endl;
+        }
+    }
+    
+
 }
 
 void mostrandoTotalventas(Empresa vect[], int vectTotal[], const int dim, int vectTotalCantVentas[])
