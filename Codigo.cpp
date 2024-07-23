@@ -14,15 +14,24 @@ struct Venta
     unsigned dia;
     unsigned codigo;
     unsigned importe;
+    unsigned cantVentas; /* Rehacerlo y modificar*/
 };
-
+/*
+struct VentasTotalEmpresa{
+    unsigned codigo;
+    char nombre[30];
+    unsigned dia;
+    unsigned importe;
+    unsigned cantVentas;
+};
+ */
 unsigned cargandoDatos(Empresa[]);
 void mostrandoVector(Empresa[], const int);
 void escribiendoArchivoDeEmpresas(Empresa vect[], const int dim);
 unsigned extrayendoDatos(Empresa[]);
 void mostrandoVectorVentas(Venta[], const int);
-void candtidadDeVentasDia(Venta[], Empresa[], const int, int[]);
-void mostrandoTotalventas(Empresa[], int[], const int);
+void candtidadDeVentasDia(Venta[], Empresa[], const int, int[], int[]);
+void mostrandoTotalventas(Empresa[], int[], const int,int[]);
 
 int main()
 {
@@ -40,31 +49,31 @@ int main()
     /* leyendo archivo de las empresas */
     Empresa vectDatosArch[dim /*-> 500*/];
     unsigned dimVect = extrayendoDatos(vectDatosArch) - 1;
-    int vectTotal[dimVect] = {0};
+    int vectTotalImporte[dimVect] = {0};
+    int vectTotalCantVentas[dimVect] = {0};
 
     /* Importe total por dia  */
     Venta vectVentasEmpresas[dimVect * 3];
-    candtidadDeVentasDia(vectVentasEmpresas, vectDatosArch, dimVect, vectTotal);
+    candtidadDeVentasDia(vectVentasEmpresas, vectDatosArch, dimVect, vectTotalImporte, vectTotalCantVentas);
     cout << "-------------------------------------------------------" << endl;
     mostrandoVectorVentas(vectVentasEmpresas, dimVect * 3);
-
     /* mostrando el total de ventas de las empresas */
     cout << "-------------------------------------------------------" << endl;
     cout << "- Total de las empresas -" << endl;
-    mostrandoTotalventas(vectDatosArch,vectTotal,dimVect);
+    mostrandoTotalventas(vectDatosArch, vectTotalImporte, dimVect, vectTotalCantVentas);
 
     return 0;
 }
 
-void mostrandoTotalventas(Empresa vect[], int vectTotal[], const int dim)
+void mostrandoTotalventas(Empresa vect[], int vectTotal[], const int dim, int vectTotalCantVentas[])
 {
-    for (unsigned i = 0; i < dim; i++)
+    for (int i = 0; i < dim; i++)
     {
-        cout << "Nombre de empresa -> " << vect[i].nombre << " | Importe total -> " << vectTotal[i] << endl;
+        cout << "Nombre de empresa -> " << vect[i].nombre << " | Total de ventas: " << vectTotalCantVentas[i] << " | Importe total -> " << vectTotal[i] << endl;
     }
 }
 
-void candtidadDeVentasDia(Venta vect[], Empresa vectTwo[], const int dim, int vectTotal[])
+void candtidadDeVentasDia(Venta vect[], Empresa vectTwo[], const int dim, int vectTotalImporte[], int vectTotalCantVentas[])
 {
     unsigned j = 0;
     unsigned contDia = 0;
@@ -76,9 +85,12 @@ void candtidadDeVentasDia(Venta vect[], Empresa vectTwo[], const int dim, int ve
         cout << "Nombre de empresa: " << vectTwo[j].nombre << endl;
         vect[i].dia = contDia++;
         cout << "Dia: " << contDia << endl;
+        cout << "Cantidad de ventas: ";
+        cin >> vect[i].cantVentas;
+        vectTotalCantVentas[j] += vect[i].cantVentas;
         cout << "Importe: ";
         cin >> vect[i].importe;
-        vectTotal[j] += vect[i].importe;
+        vectTotalImporte[j] += vect[i].importe;
         if ((i + 1) % 3 == 0)
         {
             j++;
@@ -146,6 +158,6 @@ void mostrandoVectorVentas(Venta vect[], const int dim)
     /* cout << "Cantidad de empresas cargadas: " << dim << endl; */
     for (int i = 0; i < dim; i++)
     {
-        cout << "Codigo de empresa -> " << vect[i].codigo << " | Dia -> " << vect[i].dia + 1 << " | Importe -> " << vect[i].importe << endl;
+        cout << "Codigo de empresa -> " << vect[i].codigo << " | Dia -> " << vect[i].dia + 1 << " | Cantidad de ventas: " << vect[i].cantVentas << " | Importe -> " << vect[i].importe << endl;
     }
 }
