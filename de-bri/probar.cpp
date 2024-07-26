@@ -39,14 +39,14 @@ int main()
 {
     /*Definicion de variables*/
     const int dim = 500;
-    Empresa vectEmpresas[dim];
+    // Empresa vectEmpresas[dim];
     /*Ingreso de datos y estebleciendo la dimencion del vector*/
-    unsigned dimRealVect = cargandoDatos(vectEmpresas);
+    // unsigned dimRealVect = cargandoDatos(vectEmpresas);
     cout << "-------------------------------------------------------" << endl;
     /* Mostrando las empresas ya cargadas en el vector */
-    mostrandoVector(vectEmpresas, dimRealVect);
+    // mostrandoVector(vectEmpresas, dimRealVect);
     /* Escribe un archivo binario */
-    escribiendoArchivoDeEmpresas(vectEmpresas, dimRealVect);
+    // escribiendoArchivoDeEmpresas(vectEmpresas, dimRealVect);
 
     /*punto 1) */
     /* leyendo archivo de las empresas */
@@ -65,14 +65,13 @@ int main()
     cout << "- Total de las empresas -" << endl;
     mostrandoTotalventas(vectDatosArch, vectTotalImporte, dimVect, vectTotalCantVentas);
 
-    /* punto-2 */
-    cout << "---------------------------------------------------------" << endl;
-    diassinventas(vectDatosArch, dimVect, vectVentasEmpresas, dimVect * 3);
-
     /*Punto 3) */
     /*Informar la o las empresas que recaudaron el menor importe total, informando también dicho importe*/
     cout << "---------------------------------------------------------" << endl;
     menorImporteTotal(vectTotalImporte, dimVect, vectDatosArch);
+
+    cout << "---------------------------------------------------------" << endl;
+    diassinventas(vectDatosArch, dimVect, vectVentasEmpresas, dimVect * 3);
 
     return 0;
 }
@@ -195,11 +194,19 @@ void mostrandoVectorVentas(Venta vect[], const int dim)
 
 void diassinventas(Empresa empresa[], const int dimEmpresas, Venta ventas[], const int dimVentas)
 {
+
+    /* bool diassinventas = false; */
+
     for (unsigned j = 0; j < dimVentas; j++)
     {
         if (ventas[j].cantVentas == 0)
         {
             cout << "Empresa: " << ventas[j].codigo << " | El dia: " << ventas[j].dia + 1 << " -> no tuvo ventas " << endl;
+            /* diassinventas = true; */
         }
+        /* else if (!diassinventas)
+        {
+            cout << "ninguno"<<endl;
+        } */
     }
 }
