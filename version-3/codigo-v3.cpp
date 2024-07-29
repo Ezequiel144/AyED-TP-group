@@ -68,13 +68,6 @@ int main()
     cout << " - Cantidad de ventas e importes por dia de todas las empresas - " << endl;
     mostrandoVectorVentas(vectVentasEmpresas, dimVect * 3);
 
-    /* cout << "-------------------------------------------------------" << endl;
-    cout << " - mostrando empresas adheridas al HotSale - " << endl;
-    for (int i = 0; i < dimVtaAdhe; i++)
-    {
-        cout << vectVtasEmpAdhe[i].codigo << endl;
-    } */
-
     /*punto-1 Informar por cada día de la promoción cantidad de ventas e importe total recaudado por cada empresa adheridas */
     cout << "-------------------------------------------------------" << endl;
     cout << "- Total de las empresas Adheridas -" << endl;
@@ -92,7 +85,7 @@ int main()
     /*Punto-3 */
     /*Informar la o las empresas que recaudaron el menor importe total, informando también dicho importe*/
     cout << "---------------------------------------------------------" << endl;
-    // enconetra cual es el menor importe total de las empresas adheridas
+    // encontra cual es el menor importe total de las empresas adheridas
     unsigned menorImporte = vectTotalImportePrueba[0];
 
     menorImporteTotal(vectTotalImportePrueba, dimTotalImporte, codigoEmpAdheridas, dimCodigoAdhe);
@@ -101,6 +94,7 @@ int main()
     cout << "---------------------------------------------------------" << endl;
     mayordiaventas(vectVtasEmpAdhe, dimVtaAdhe);
     /*Punto-5*/
+    cout << "---------------------------------------------------------" << endl;
     unsigned posOrdenamiento[dimVect] = {0};
     ordenamientoEmpresa(vectDatosArch, dimVect, posOrdenamiento);
     cargarArchivo(vectDatosArch, vectTotalImportePrueba, vectTotalCantVtaPrueba, dimVect, codigoEmpAdheridas, dimCodigoAdhe, posOrdenamiento);
@@ -164,7 +158,7 @@ void menorImporteTotal(unsigned importTotal[], const int dimImporteTotal, int co
     {
         if (importTotal[i] == menorImporte)
         {
-            cout << "La empresa que tubo el menor importe total es -> " << codigoEmpAdhe[i] << " , con el importe de -> " << menorImporte << endl;
+            cout << "La empresa que tuvo el menor importe total es -> " << codigoEmpAdhe[i] << " , con el importe de -> " << menorImporte << endl;
         }
     }
 }
@@ -194,10 +188,6 @@ void mayordiaventas(Venta vect[], int dim)
     vecaux[0] = aux1;
     vecaux[1] = aux2;
     vecaux[2] = aux3;
-    /*
-        cout << "aux1: " << aux1 << endl;
-        cout << "aux2: " << aux2 << endl;
-        cout << "aux3: " << aux3 << endl; */
 
     for (int j = 0; j < 3; j++) // Recorro el vector para buscar el mayor de cant de ventas.
     {
@@ -250,10 +240,8 @@ void cargarArchivo(Empresa vectEmp[], unsigned importeTotal[], unsigned cantVtas
     if (!archivo) // Si no lo puede abrir, devuelve error.
     {
         cout << "Error al intentar abrir el archivo"; // error archivo no encontrado...
-        // exit(-1);
         return;
     }
-    /* mostrarStruct(); */ // Copia el struct ordenado al archivo binario.
     int posImporteCantVts = 0;
     for (int i = 0; i < dimEmp; i++)
     {
@@ -284,7 +272,6 @@ void generarArchivoSinAdhesion(Venta vectVentas[], const int dimVtas)
 
     for (int i = 0; i < dimVtas; i++)
     {
-        //cout<<"Codigos de empresas -> "<<vectVentas[i].codigo<<" | Dia -> "<<vectVentas[i].dia + 1<<endl;
         fwrite(&vectVentas[i], sizeof(Venta), 1, archivo);
     }
     fclose(archivo);
@@ -379,7 +366,6 @@ unsigned extrayendoDatos(Empresa vect[], int codigoAdhe[], unsigned &dimCodigoAs
     FILE *lecturaArchBin = fopen("C:/Users/Ezequiel/Documents/UTN Buenos Aires/Algoy Estruc de datos 2024/TP/version-3/output/datos-de-empresas.dat", "rb");
     int cont = 0;
     unsigned i = 0;
-    /* Empresa vectDatosArch[500]; */
     fseek(lecturaArchBin, 0, SEEK_SET);
     while (!feof(lecturaArchBin))
     {
@@ -398,7 +384,6 @@ unsigned extrayendoDatos(Empresa vect[], int codigoAdhe[], unsigned &dimCodigoAs
 
 void mostrandoVectorVentas(Venta vect[], const int dim)
 {
-    /* cout << "Cantidad de empresas cargadas: " << dim << endl; */
     for (int i = 0; i < dim; i++)
     {
         cout << "Codigo de empresa -> " << vect[i].codigo << " | Dia -> " << vect[i].dia + 1 << " | Cantidad de ventas: " << vect[i].cantVentas << " | Importe -> " << vect[i].importe << endl;
