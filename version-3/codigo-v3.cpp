@@ -20,21 +20,19 @@ struct Venta
 };
 
 unsigned cargandoDatos(Empresa[]);
-// void mostrandoVector(Empresa[], const int);
 void escribiendoArchivoDeEmpresas(Empresa vect[], const int dim);
 unsigned extrayendoDatos(Empresa[], int[], unsigned &);
 void mostrandoVectorVentas(Venta[], const int);
 void candtidadDeVentasDia(Venta[], Empresa[], const int, int[], int[]);
 void mostrandoTotalventas(Empresa[], int[], const int, int[], int[], const unsigned);
-// void mostrandoTotalventas(Empresa[], Venta[], int[], const int, int[]);
-// void menorImporteTotal(int[], const int, Empresa[]);
 void menorImporteTotal(unsigned[], const int, int[], const int);
 void diassinventas(Venta[], const int);
-// void mostrandoEmpresasAdheridas(int[], const unsigned);
 void separandoEmpAdheridas(Venta[], Venta[], Venta[], int[], const int, const int, int &, int &);
-/* unsigned candtidadDeVentasDiaAdhe(Venta[], Venta[], const unsigned, int[], const unsigned); */
 void mayordiaventas(Venta[], int);
 unsigned totalEmpresasAdhe(unsigned[], const int, Venta[], unsigned[]);
+void ordenamientoEmpresa(Empresa[], const int, unsigned[]);
+void cargarArchivo(Empresa[], unsigned[], unsigned[], const int, int[], const int, unsigned[]);
+void generarArchivoSinAdhesion(Venta [], const int);
 
 int main()
 {
@@ -52,6 +50,7 @@ int main()
     int vectTotalCantVentas[dimVect] = {0};
     unsigned vectTotalImportAdhe[dimVect] = {0};
     cout << "-------------------------------------------------------" << endl;
+
     /* Importe total por dia de todas las empresas*/
     Venta vectVentasEmpresas[dimVect * 3];
     candtidadDeVentasDia(vectVentasEmpresas, vectDatosArch, dimVect, vectTotalImporte, vectTotalCantVentas);
@@ -79,7 +78,6 @@ int main()
     /*punto-1 Informar por cada día de la promoción cantidad de ventas e importe total recaudado por cada empresa adheridas */
     cout << "-------------------------------------------------------" << endl;
     cout << "- Total de las empresas Adheridas -" << endl;
-    // mostrandoTotalventas(vectDatosArch, vectTotalImporte, dimVect, vectTotalCantVentas, codigoEmpAdheridas, dimCodigoAdhe);
     unsigned vectTotalImportePrueba[dimVect] = {0};
     unsigned vectTotalCantVtaPrueba[dimVect] = {0};
     unsigned dimTotalImporte = 0;
@@ -103,29 +101,16 @@ int main()
     cout << "---------------------------------------------------------" << endl;
     mayordiaventas(vectVtasEmpAdhe, dimVtaAdhe);
     /*Punto-5*/
-
+    unsigned posOrdenamiento[dimVect] = {0};
+    ordenamientoEmpresa(vectDatosArch, dimVect, posOrdenamiento);
+    cargarArchivo(vectDatosArch, vectTotalImportePrueba, vectTotalCantVtaPrueba, dimVect, codigoEmpAdheridas, dimCodigoAdhe, posOrdenamiento);
+    /*Punto-6*/
+    generarArchivoSinAdhesion(vectVtasEmpNoAdhe, dimVtaNoAdhe);
 
     return 0;
 }
-/* funciones punto-5 */
-void ordenamientoEmpresa() // Función para ordenar las empresas por su código indentificador. 
-{
-  for (int i = 0; i < NUMERO_EMPRESAS - 1; i++)
-    {
-      for (int j = 0; j < NUMERO_EMPRESAS - 1 - i; j++)
-      {
-        if (arrEmpresa[j].codigo > arrEmpresa[j+1].codigo)
-        {
-          empresa temp = arrEmpresa[j];
-          arrEmpresa[j] = arrEmpresa[j+1];
-          arrEmpresa[j+1] = temp;
-        }
-      }
-    }
-}
 
-
-/* ----- */
+/* funciones punto-1 */
 unsigned totalEmpresasAdhe(unsigned totalImport[], const int dimVta, Venta vtasEmpAdhe[], unsigned totalCantVta[])
 {
     // hace los importes totales de cada empresa adherida
@@ -150,49 +135,19 @@ unsigned totalEmpresasAdhe(unsigned totalImport[], const int dimVta, Venta vtasE
 
     return posImporte;
 }
-
-void separandoEmpAdheridas(Venta vectVentasEmpresas[], Venta VtasEmpAdhe[], Venta VtasEmpNoAdhe[], int codigoEmpAdhe[], const int dimVect, const int dimCodigoEmpAdhe, int &dimAdhe, int &dimNoAdhe)
+/* ----- */
+/* funciones punto-2 */
+void diassinventas(Venta ventas[], const int dimVentas)
 {
-    int posAdhe = 0;   // indicara la posicion del vector de ventas de empresas adheridas
-    int posNoAdhe = 0; // indicara la posicion del vector de ventas de empresas no adheridas
-    bool var = false;
-
-    for (int j = 0; j < dimVect * 3; j++)
+    for (unsigned j = 0; j < dimVentas; j++)
     {
-        // condicion que compara el "codigo de todas las empresas" con "el codigo de las adheridas" para sacar los vectores de ventas de las empreasas adheridas y las  no adheridas
-        for (int k = 0; k < dimCodigoEmpAdhe; k++)
+        if (ventas[j].cantVentas == 0)
         {
-            if (vectVentasEmpresas[j].codigo == codigoEmpAdhe[k])
-            {
-                VtasEmpAdhe[posAdhe] = vectVentasEmpresas[j]; // agregar al vector de eventas de empresas adheridas
-                cout << "parte del vector ventas de empresas adherida -> " << vectVentasEmpresas[j].codigo << " | dia -> " << vectVentasEmpresas[j].dia << endl;
-
-                posAdhe++;
-            }
+            cout << "Empresa: " << ventas[j].codigo << " | El dia: " << ventas[j].dia + 1 << " -> no tuvo ventas " << endl;
         }
     }
-    for (int i = 0; i < dimVect * 3; i++)
-    {
-        for (int h = 0; h < dimCodigoEmpAdhe; h++)
-        {
-            if (vectVentasEmpresas[i].codigo == codigoEmpAdhe[h])
-            {
-                var = true;
-            }
-        }
-        if (!var)
-        {
-            VtasEmpNoAdhe[posNoAdhe] = vectVentasEmpresas[i]; // agregar al vector de eventas de empresas adheridas
-            cout << "parte del vector ventas de empresas no adherida -> " << vectVentasEmpresas[i].codigo << " | dia -> " << vectVentasEmpresas[i].dia << endl;
-            posNoAdhe++;
-        }
-        var = false;
-    }
-
-    dimAdhe = posAdhe;
-    dimNoAdhe = posNoAdhe;
 }
-
+/* funciones punto-3 */
 void menorImporteTotal(unsigned importTotal[], const int dimImporteTotal, int codigoEmpAdhe[], const int dimCodigoEmpAdhe)
 {
     // enconetra cual es el menor importe total de las empresas adheridas
@@ -213,7 +168,8 @@ void menorImporteTotal(unsigned importTotal[], const int dimImporteTotal, int co
         }
     }
 }
-
+/* ----- */
+/* funciones punto-4 */
 void mayordiaventas(Venta vect[], int dim)
 {
     int aux1 = 0, aux2 = 0, aux3 = 0, mayor = -1;
@@ -255,6 +211,128 @@ void mayordiaventas(Venta vect[], int dim)
         if (mayor == vecaux[k])
             cout << "Dia -> " << k + 1 << " | Cantidad de ventas -> " << vecaux[k] << endl;
     }
+}
+/* ----- */
+/* funciones punto-5 */
+void ordenamientoEmpresa(Empresa vectEmpAdhe[], const int dimEmpAdhe, unsigned posOrdenamiento[]) // Función para ordenar las empresas por su código indentificador.
+{
+    Empresa temp;
+    unsigned aux;
+    unsigned auxPosicionOrd[dimEmpAdhe] = {0};
+
+    for (int k = 0; k < dimEmpAdhe; k++)
+    {
+        auxPosicionOrd[k] = k;
+    }
+
+    for (int i = 0; i < dimEmpAdhe - 1; i++)
+    {
+        for (int j = 0; j < dimEmpAdhe - 1 - i; j++)
+        {
+            if (vectEmpAdhe[j].codigo > vectEmpAdhe[j + 1].codigo)
+            {
+                temp = vectEmpAdhe[j];
+                vectEmpAdhe[j] = vectEmpAdhe[j + 1];
+                vectEmpAdhe[j + 1] = temp;
+
+                aux = auxPosicionOrd[j];
+                auxPosicionOrd[j] = auxPosicionOrd[j + 1];
+                auxPosicionOrd[j + 1] = aux;
+            }
+        }
+    }
+    posOrdenamiento = auxPosicionOrd;
+}
+void cargarArchivo(Empresa vectEmp[], unsigned importeTotal[], unsigned cantVtasTotal[], const int dimEmp, int codigoEmpAdheridas[], const int dimCodigoEmpAdhe, unsigned posOrdenamiento[]) // Crea archivo, y utiliza la función mostrarStruct() para imprimir la info de las empresas ordenadas.
+{
+    FILE *archivo = fopen("ImporteEmpresas.dat", "wb"); // Abre archivo binario.
+
+    if (!archivo) // Si no lo puede abrir, devuelve error.
+    {
+        cout << "Error al intentar abrir el archivo"; // error archivo no encontrado...
+        // exit(-1);
+        return;
+    }
+    /* mostrarStruct(); */ // Copia el struct ordenado al archivo binario.
+    int posImporteCantVts = 0;
+    for (int i = 0; i < dimEmp; i++)
+    {
+        for (int j = 0; j < dimCodigoEmpAdhe; j++)
+        {
+            if (vectEmp[i].codigo == codigoEmpAdheridas[j])
+            {
+                fwrite(&vectEmp[i].codigo, sizeof(unsigned), 1, archivo);
+                fwrite(&vectEmp[i].nombre, sizeof(char[30]), 1, archivo);
+                fwrite(&cantVtasTotal[/* posImporteCantVts */ posOrdenamiento[i]], sizeof(unsigned), 1, archivo);
+                fwrite(&importeTotal[/* posImporteCantVts */ posOrdenamiento[i]], sizeof(unsigned), 1, archivo);
+                posImporteCantVts++;
+            }
+        }
+    }
+    fclose(archivo);
+}
+/* ----- */
+/* funciones punto-6 */
+void generarArchivoSinAdhesion(Venta vectVentas[], const int dimVtas)
+{
+    FILE *archivo = fopen("SinAdhesion.dat", "wb");
+    if (!archivo)
+    {
+        cout << "Error al abrir el archivo SinAdhesion.dat" << endl;
+        return;
+    }
+
+    for (int i = 0; i < dimVtas; i++)
+    {
+        //cout<<"Codigos de empresas -> "<<vectVentas[i].codigo<<" | Dia -> "<<vectVentas[i].dia + 1<<endl;
+        fwrite(&vectVentas[i], sizeof(Venta), 1, archivo);
+    }
+    fclose(archivo);
+    cout << "Archivo SinAdhesion.dat generado exitosamente." << endl;
+}
+/* ----- */
+
+/* Extraccion, muestras y separacion de datos iniciales*/
+void separandoEmpAdheridas(Venta vectVentasEmpresas[], Venta VtasEmpAdhe[], Venta VtasEmpNoAdhe[], int codigoEmpAdhe[], const int dimVect, const int dimCodigoEmpAdhe, int &dimAdhe, int &dimNoAdhe)
+{
+    int posAdhe = 0;   // indicara la posicion del vector de ventas de empresas adheridas
+    int posNoAdhe = 0; // indicara la posicion del vector de ventas de empresas no adheridas
+    bool var = false;
+
+    for (int j = 0; j < dimVect * 3; j++)
+    {
+        // condicion que compara el "codigo de todas las empresas" con "el codigo de las adheridas" para sacar los vectores de ventas de las empreasas adheridas y las  no adheridas
+        for (int k = 0; k < dimCodigoEmpAdhe; k++)
+        {
+            if (vectVentasEmpresas[j].codigo == codigoEmpAdhe[k])
+            {
+                VtasEmpAdhe[posAdhe] = vectVentasEmpresas[j]; // agregar al vector de eventas de empresas adheridas
+                cout << "parte del vector ventas de empresas adherida -> " << vectVentasEmpresas[j].codigo << " | dia -> " << vectVentasEmpresas[j].dia << endl;
+
+                posAdhe++;
+            }
+        }
+    }
+    for (int i = 0; i < dimVect * 3; i++)
+    {
+        for (int h = 0; h < dimCodigoEmpAdhe; h++)
+        {
+            if (vectVentasEmpresas[i].codigo == codigoEmpAdhe[h])
+            {
+                var = true;
+            }
+        }
+        if (!var)
+        {
+            VtasEmpNoAdhe[posNoAdhe] = vectVentasEmpresas[i]; // agregar al vector de eventas de empresas adheridas
+            cout << "parte del vector ventas de empresas no adherida -> " << vectVentasEmpresas[i].codigo << " | dia -> " << vectVentasEmpresas[i].dia << endl;
+            posNoAdhe++;
+        }
+        var = false;
+    }
+
+    dimAdhe = posAdhe;
+    dimNoAdhe = posNoAdhe;
 }
 
 void mostrandoTotalventas(Empresa vect[], int vectTotal[], const int dim, int vectTotalCantVentas[], int codigoEmpAdheridas[], const unsigned dimCodigoAdhe)
@@ -324,16 +402,5 @@ void mostrandoVectorVentas(Venta vect[], const int dim)
     for (int i = 0; i < dim; i++)
     {
         cout << "Codigo de empresa -> " << vect[i].codigo << " | Dia -> " << vect[i].dia + 1 << " | Cantidad de ventas: " << vect[i].cantVentas << " | Importe -> " << vect[i].importe << endl;
-    }
-}
-
-void diassinventas(Venta ventas[], const int dimVentas)
-{
-    for (unsigned j = 0; j < dimVentas; j++)
-    {
-        if (ventas[j].cantVentas == 0)
-        {
-            cout << "Empresa: " << ventas[j].codigo << " | El dia: " << ventas[j].dia + 1 << " -> no tuvo ventas " << endl;
-        }
     }
 }

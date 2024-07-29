@@ -82,6 +82,8 @@ void mostrarStruct() // Hace "cout" del array de structs.
     fwrite(&arrEmpresa[i].nombre, sizeof(string), 1, archivo);
     fwrite(&arrEmpresa[i].recaudado, sizeof(int), 1, archivo);
     fwrite(&arrEmpresa[i].ventas, sizeof(int), 1, archivo);
+
+    fwrite()
   }
 }
 
@@ -89,10 +91,11 @@ void cargarArchivo() // Crea archivo, y utiliza la función mostrarStruct() para
 {
   archivo = fopen("Importe.dat", "wb"); // Abre archivo binario.
 
-  if (archivo == NULL) // Si no lo puede abrir, devuelve error.
+  if (!archivo) // Si no lo puede abrir, devuelve error.
   {
-    cout << "Error al intentar abrir el archivo";
-    exit(-1);
+    cout << "Error al intentar abrir el archivo"; // error archivo no encontrado...
+    //exit(-1);
+    return -1;
   }  
   mostrarStruct(); // Copia el struct ordenado al archivo binario.
 }

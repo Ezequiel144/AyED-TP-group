@@ -51,7 +51,7 @@ int main()
     return 0;
 }
 
-void escribiendoArchivoDeEmpresas(Empresa vect[], const int dim)
+void escribiendoArchivoDeEmpresas(Empresa vect[], const int dim) // Ventas vect[], const int dimVentas -> no adheridas
 {
     FILE *archEscribir = fopen("datos-de-empresas.dat", "wb");
     for (int i = 0; i < dim; i++)
