@@ -362,7 +362,7 @@ void candtidadDeVentasDia(Venta vect[], Empresa vectTwo[], const int dim, int ve
 
 unsigned extrayendoDatos(Empresa vect[], int codigoAdhe[], unsigned &dimCodigoAshe)
 {
-    FILE *lecturaArchBin = fopen("C:/Users/Ezequiel/Documents/UTN Buenos Aires/Algoy Estruc de datos 2024/TP/version-3/output/datos-de-empresas.dat", "rb");
+    FILE *lecturaArchBin = fopen("/datos-de-empresas.dat", "rb");
     int cont = 0;
     unsigned i = 0;
     fseek(lecturaArchBin, 0, SEEK_SET);
