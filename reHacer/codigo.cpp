@@ -20,6 +20,8 @@ struct Ventas
 
 // ----- prototipos -----
 
+void cargandoEmpNoAdhe(Ventas[][3], Empresas[], const int, const int, const int);
+void creandoGuardandoArchBin(Ventas[][3], Empresas[], int[], int[], const int, const int);
 void diaMayorVenta(Ventas[][3], Empresas[], const int, const int, const int);
 void menorImporteTotal(Ventas[][3], Empresas[], const int, const int, const int, int[]);
 void diasSinVentas(Ventas[][3], Empresas[], const int, const int, const int);
@@ -68,15 +70,88 @@ int main()
     cout << "- Empresas que recaudaron el menor importe total -" << endl;
     menorImporteTotal(matrizTodasLasEmp, vectEmpAdhe, dimCargaDeEmpresas, dimVectCarga, diaHotSale, importeTotal);
 
+    // Punto 4.
     cout << "--------------------------------------------" << endl;
     cout << "- Mayor venta que hubo en los 3 dias por empresas -" << endl;
     diaMayorVenta(matrizTodasLasEmp, vectEmpAdhe, dimCargaDeEmpresas, dimVectCarga, diaHotSale);
 
+    // Punto 5.
+    cout << "--------------------------------------------" << endl;
+    cout << "- Ventas ordenadas y guardandolo en un archivo ImporteEmpresas.dat -" << endl;
 
+    // mostrandoDatosMatrizEmp(matrizTodasLasEmp, dimCargaDeEmpresas, diaHotSale);
+
+    creandoGuardandoArchBin(matrizTodasLasEmp, vectEmpAdhe, cantidadVentasTotal, importeTotal, dimCargaDeEmpresas, dimVectCarga);
+
+    // Punto 6.
+    cout << "--------------------------------------------" << endl;
+    cout << "- Creando y guardando dato de empresas no adheridas al archivo SinAhdesion.dat -" << endl;
+    cargandoEmpNoAdhe(matrizTodasLasEmp,vectEmpAdhe,dimCargaDeEmpresas,dimVectCarga,diaHotSale);
     return 0;
 }
 
 // ----- funciones -----
+void cargandoEmpNoAdhe(Ventas matriz[][3], Empresas vectEmp[], const int dimMatriz, const int dimEmp, const int dia)
+{
+    FILE *escribirArch = fopen("SinAhdesion.dat", "wb");
+    for (int i = 0; i < dimMatriz; i++)
+    {
+        if (!busquedaDeEmpAdheridas(matriz, vectEmp, dimEmp, i))
+        {
+            cout << "Codigo de empresa -> " << matriz[i][0].codigo << endl;
+            fwrite(&matriz[i][0].codigo, sizeof(int), 1, escribirArch);
+            for (int j = 0; j < dia; j++)
+            {
+                cout << " dia -> " << matriz[i][j].dia << " | importe -> " << matriz[i][j].importe << endl;
+                fwrite(&matriz[i][j].dia, sizeof(int), 1, escribirArch);
+                fwrite(&matriz[i][j].importe, sizeof(int), 1, escribirArch);
+            }
+        }
+    }
+}
+
+void creandoGuardandoArchBin(Ventas matriz[][3], Empresas vectEmp[], int cantidadVentasTotal[], int importeTotal[], const int dimMatriz, const int dimEmp)
+{
+    FILE *escribirArch = fopen("ImporteEmpresas.dat", "wb");
+
+    for (int i = 0; i < dimMatriz; i++)
+    {
+        if (busquedaDeEmpAdheridas(matriz, vectEmp, dimEmp, i))
+        {
+            fwrite(&matriz[i][0].codigo, sizeof(int), 1, escribirArch);
+            // cout << matriz[i][0].codigo << endl;
+            for (int k = 0; k < dimEmp; k++)
+            {
+                if (matriz[i][0].codigo == vectEmp[k].codigo)
+                {
+                    fwrite(&vectEmp[k].nombre, sizeof(int), 1, escribirArch);
+                    // cout << vectEmp[k].nombre << endl;
+                }
+            }
+        }
+        fwrite(&cantidadVentasTotal[i], sizeof(int), 1, escribirArch);
+        fwrite(&importeTotal[i], sizeof(int), 1, escribirArch);
+        // cout << cantidadVentasTotal[i] << endl;
+        // cout << importeTotal[i] << endl;
+    }
+}
+
+void ordenamientoDecreciente(Ventas matriz[][3], const int dimMatriz)
+{
+    Ventas aux;
+    for (int i = 0; i < dimMatriz - 1; i++)
+    {
+        for (int j = i + 1; j < dimMatriz; j++)
+        {
+            if (matriz[i][0].codigo < matriz[j][0].codigo)
+            {
+                aux = matriz[i][0];
+                matriz[i][0] = matriz[j][0];
+                matriz[j][0] = aux;
+            }
+        }
+    }
+}
 
 void diaMayorVenta(Ventas matriz[][3], Empresas vectEmp[], const int dimMatriz, const int dimEmp, const int dia)
 {
@@ -86,21 +161,22 @@ void diaMayorVenta(Ventas matriz[][3], Empresas vectEmp[], const int dimMatriz, 
     {
         if (busquedaDeEmpAdheridas(matriz, vectEmp, dimEmp, i))
         {
-
             cout << "Codigo de empresa: " << matriz[i][0].codigo << endl;
             for (int j = 0; j < dia; j++)
             {
                 if (matriz[i][j].importe > mayor)
                 {
                     mayor = matriz[i][j].importe;
+                    // cout << "posicion de dias " << j << endl;
                     posJ = j;
                 }
             }
-            cout << "El dia " << matriz[i][posJ].dia << " tubo la mayor venta de " << matrizTodasLasEmp[i][posJ].importe << endl;
+            cout << "El dia " << matriz[i][posJ].dia + 1 << " tubo la mayor venta de " << matriz[i][posJ].importe << endl;
+            mayor = matriz[i][0].importe;
         }
     }
 }
-
+// arreglar
 void menorImporteTotal(Ventas matriz[][3], Empresas vectEmp[], const int dimMatriz, const int dimEmp, const int dia, int importeTotal[])
 {
     int menor = importeTotal[0];
@@ -119,8 +195,8 @@ void menorImporteTotal(Ventas matriz[][3], Empresas vectEmp[], const int dimMatr
     }
 
     for (int i = 0; i < dimMatriz; i++)
-    {
-        if (menor == importeTotal[i])
+    { // arreglar
+        if (menor != importeTotal[i])
         {
             cout << "Codigo de empresa -> " << matriz[i][0].codigo << " | importe total -> " << importeTotal[i] << endl;
         }
@@ -138,7 +214,7 @@ void diasSinVentas(Ventas matriz[][3], Empresas vectEmp[], const int dimMatriz, 
             {
                 if (matriz[i][j].importe == 0)
                 {
-                    cout << " Dia -> " << matriz[i][j].dia << ",  sin ventas" << endl;
+                    cout << " Dia -> " << matriz[i][j].dia + 1 << ",  sin ventas" << endl;
                 }
             }
             /* if (matriz[i][2].importe != 0)
@@ -199,7 +275,7 @@ void mostrandoDatosMatrizEmp(Ventas matrizVtas[][3], const int dim, const int di
         cout << "Codigo de empresa: " << matrizVtas[i][0].codigo << endl;
         for (int j = 0; j < dia; j++)
         {
-            cout << "dia -> " << matrizVtas[i][j].dia << " | importe -> " << matrizVtas[i][j].importe << endl;
+            cout << "dia -> " << matrizVtas[i][j].dia + 1 << " | importe -> " << matrizVtas[i][j].importe << endl;
         }
     }
 }
@@ -217,12 +293,16 @@ int cargandoDatosDeVentas(Ventas matrizVtas[][3], const int dim, const int dia)
         }
         for (int j = 0; j < dia; j++)
         {
-            matrizVtas[pos][j].dia = j + 1;
+            matrizVtas[pos][j].dia = j;
             cout << "dia: " << matrizVtas[pos][j].dia << endl;
             cout << "importe: ";
             cin >> matrizVtas[pos][j].importe;
         }
     }
+
+    // Ordenando la matriz de forma decreciente(mayor - menor)
+    ordenamientoDecreciente(matrizVtas, dim);
+
     return pos;
 }
 
